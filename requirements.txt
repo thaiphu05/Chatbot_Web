@@ -1,0 +1,56 @@
+# Web Framework
+fastapi==0.104.1
+uvicorn==0.24.0
+starlette==0.27.0
+python-multipart==0.0.6
+
+# Data validation
+pydantic==2.5.2
+pydantic-core==2.14.5
+
+# Environment
+python-dotenv==1.0.0
+
+# Machine Learning - Embeddings & Transformers
+sentence-transformers==2.6.1
+transformers==4.57.3
+torch==2.8.0
+torchvision==0.23.0
+torchaudio==2.8.0
+tokenizers==0.22.1
+safetensors==0.6.2
+
+# Google Generative AI (Gemini)
+google-generativeai==0.8.5
+google-api-core==2.25.2
+google-api-python-client==2.184.0
+google-auth==2.41.1
+
+# Data processing
+numpy==2.3.3
+pandas==2.2.3
+scipy==1.16.2
+scikit-learn==1.7.2
+
+# HTTP clients
+httpx==0.28.1
+requests==2.32.5
+aiohttp==3.13.0
+
+# LlamaIndex (RAG)
+llama-index==0.14.4
+llama-index-core==0.14.4
+llama-index-embeddings-huggingface==0.6.1
+
+# Utilities
+jinja2==3.1.6
+pyyaml==6.0.3
+tqdm==4.67.1
+joblib==1.5.2
+regex==2025.9.18
+beautifulsoup4==4.14.2
+pillow==10.4.0
+
+# NLP
+nltk==3.9.2
+huggingface-hub==0.35.3
