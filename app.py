@@ -12,14 +12,12 @@ import uvicorn
 from uuid import uuid4
 load_dotenv()
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Chatbot API",
-    description="API cho chatbot hỗ trợ khách hàng",
+    description="Customer support chatbot API",
     version="1.0.0"
 )
 
-# CORS middleware để cho phép frontend gọi API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,28 +26,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Khởi tạo None, load trong startup_event
 rag_system = None
 embedding_model = None
 llm = None
 
-# In-memory conversation storage (cho demo, production nên dùng Redis/Database)
 conversation_store: dict = {}
 
 
-# Pydantic models
 class ChatMessage(BaseModel):
-    role: str  # "user" hoặc "assistant"
+    role: str
     content: str
 
 class ChatRequest(BaseModel):
     message: str
     session_id: Optional[str] = None
-    # conversation_history được lưu server-side trong conversation_store
 
 class ChatResponse(BaseModel):
     response: str
-    session_id: str  # Trả về session_id để client dùng cho request tiếp theo
+    session_id: str
     # sources: Optional[List[dict]] = []
     # user_role: str # admin, superadmin or household user
 
@@ -79,10 +73,10 @@ async def startup_event():
                         'embedding': embedding_model.encode(str(chunk['metadata']['header']) + str(chunk['metadata']['title']))}
                         for chunk in sample_chunks]
         
-        print(f" Loaded {len(sample_chunks)} chunks")
+        print(f"Loaded {len(sample_chunks)} chunks")
         print("Server started successfully")
     except Exception as e:
-        print(f"Lỗi khởi tạo: {e}")
+        print(f"Initialization error: {e}")
         import traceback
         traceback.print_exc()
 
@@ -105,18 +99,13 @@ async def health_check():
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """    
-    :param request: message, session_id and conversation_history
-    :return: response, session_id and sources
-    """
     global rag_system, sample_chunks, conversation_store, llm
     
     if not request.message.strip():
-        raise HTTPException(status_code=400, detail="Message không được để trống")
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
     
-    # Check if models are loaded
     if llm is None or rag_system is None:
-        raise HTTPException(status_code=503, detail="Server đang khởi động, vui lòng thử lại sau")
+        raise HTTPException(status_code=503, detail="Server is starting, please try again later")
     
     try:
         # Get or create session
@@ -168,12 +157,11 @@ async def chat(request: ChatRequest):
         )
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Lỗi xử lý: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Processing error: {str(e)}")
 
 
 
 if __name__ == "__main__":
-    # Chạy server
     uvicorn.run(
         "app:app",
         host="0.0.0.0",
